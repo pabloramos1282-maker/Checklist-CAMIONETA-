@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Checklist Camioneta - Sup. Eléctrica</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--dark:#1f2937;--muted:#6b7280;--border:#d1d5db;--cap:#0f3d5e;--green:#15803d;--yellow:#b45309;--red:#b91c1c;--black:#111827}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--dark)}
+header{background:linear-gradient(135deg,#0f3d5e,#162a3a);color:white;padding:16px 12px;text-align:center;position:sticky;top:0;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+header h1{margin:0;font-size:22px}header p{margin:6px 0 0;font-size:13px;opacity:.92}
+main{max-width:1050px;margin:0 auto;padding:12px}.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}label{font-size:12px;color:var(--muted);font-weight:bold;display:block;margin-bottom:4px}
+input,textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;font-size:14px;background:white}textarea{resize:vertical;min-height:70px}
+.section-title{background:#111827;color:white;padding:9px 12px;border-radius:10px;font-weight:bold;margin:18px 0 10px;font-size:15px}.item{border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:9px;background:#fff}
+.item-top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}.item-name{font-weight:bold;min-width:240px}.critical{color:#991b1b}
+.options{display:flex;gap:8px;flex-wrap:wrap}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:999px;padding:8px 11px;cursor:pointer;background:#f9fafb;font-size:13px;user-select:none}.pill input{width:auto;margin:0}
+.pill.ok.active{background:#dcfce7;border-color:#86efac;color:#166534}.pill.obs.active{background:#fef3c7;border-color:#facc15;color:#92400e}.pill.na.active{background:#e5e7eb;border-color:#9ca3af;color:#374151}.obs-box{display:none;margin-top:10px}.obs-box.show{display:block}
+.actions{position:sticky;bottom:0;background:rgba(244,246,248,.96);padding:10px 0;display:flex;gap:8px;flex-wrap:wrap;backdrop-filter:blur(4px)}button{border:0;border-radius:10px;padding:11px 14px;font-weight:bold;cursor:pointer;background:var(--cap);color:white}button.secondary{background:#374151}button.danger{background:#b91c1c}button.good{background:#15803d}
+.summary{display:flex;gap:8px;flex-wrap:wrap}.badge{border-radius:999px;padding:7px 10px;font-size:13px;font-weight:bold;background:#e5e7eb}.okb{background:#dcfce7;color:#166534}.obsb{background:#fef3c7;color:#92400e}.nab{background:#e5e7eb;color:#374151}.redb{background:#fee2e2;color:#991b1b}.yellowb{background:#fef3c7;color:#92400e}.greenb{background:#dcfce7;color:#166534}.statusbox{padding:11px;border-radius:12px;font-weight:bold;margin-top:10px;border:1px solid var(--border)}
+.hist-item{border:1px solid var(--border);border-radius:10px;padding:9px;margin-top:8px;background:#f9fafb;font-size:13px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.small{font-size:12px;color:var(--muted)}
+.print-only{display:none}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.item-top{align-items:flex-start}.item-name{min-width:100%}.options{width:100%}.pill{flex:1;justify-content:center}button{flex:1}}
+@media print{
+ @page{size:A4 portrait;margin:5mm}
+ body{background:white;color:#111;font-size:8px;line-height:1.12}
+ header,.actions,.screen-only,#checklist,.card.screen-card{display:none!important}
+ .print-only{display:block!important}
+ .print-page{font-family:Arial,Helvetica,sans-serif;width:100%}
+ .print-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1.5px solid #111;padding-bottom:3px;margin-bottom:3px}
+ .print-head h1{font-size:13px;margin:0}.print-sub{font-size:7.5px;color:#333}
+ .print-table{width:100%;border-collapse:collapse;margin:2px 0}
+ .print-table td,.print-table th{border:1px solid #555;padding:1.5px 2px;font-size:7.4px;vertical-align:top}
+ .print-table th{background:#e5e7eb;text-align:left;font-weight:bold}
+ .print-status{font-weight:bold;padding:2px;border:1px solid #333;margin:2px 0;font-size:7.6px}
+ .print-section{font-weight:bold;background:#111;color:white;padding:2px 4px;margin-top:3px;font-size:7.8px}
+ .full-check{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:2px}
+ .full-check th,.full-check td{border:1px solid #555;padding:1.2px 1.5px;font-size:6.35px;vertical-align:middle;line-height:1.05}
+ .full-check th{background:#e5e7eb;font-weight:bold;text-align:center}
+ .full-check .sec{background:#111;color:white;text-align:left;font-size:6.7px;padding:1.5px 3px}
+ .full-check .itemtxt{width:58%;text-align:left;white-space:normal}
+ .full-check .estado{width:12%;text-align:center;font-weight:bold}
+ .full-check .obs{width:30%;text-align:left;white-space:normal}
+ .foot-note{font-size:6.8px;margin-top:3px}
+ .no-print{display:none!important}
+}
+</style>
+</head>
+<body>
+<header><h1>CHECK LIST CAMIONETA</h1><p>Sup. Eléctrica · Capstone Copper</p></header>
+<main>
+<section class="card screen-card">
+  <div class="grid">
+    <div><label>Tipo de vehículo</label><input id="vehiculo" value="CAMIONETA"></div>
+    <div><label>Área</label><input id="area" value="SUP. ELÉCTRICA"></div>
+    <div><label>Placa</label><input id="placa" value="SXXH-99"></div>
+    <div><label>Conductor</label><input id="conductor" placeholder="Nombre conductor"></div>
+    <div><label>N° interno</label><input id="interno" value="R-25"></div>
+    <div><label>Fecha checklist</label><input id="fecha" type="date"></div>
+    <div><label>Kilometraje actual</label><input id="km_actual" type="number" min="0" placeholder="Ej: 125000"></div>
+    <div><label>Próxima mantención</label><input id="prox_mantencion" type="date"></div>
+  </div>
+  <div id="mantStatus" class="statusbox">Ingrese fecha de próxima mantención.</div>
+</section>
+<section class="card screen-card"><div class="summary" id="summary"></div><div id="aptoStatus" class="statusbox">Resultado: pendiente de evaluación.</div></section>
+<section id="checklist"></section>
+<section class="card screen-card">
+  <strong>Historial local</strong><div class="small">Se guarda sólo en este equipo/navegador.</div><div id="historial"></div>
+</section>
+<div class="actions"><button class="good" onclick="guardar()">Guardar Checklist</button><button class="secondary" onclick="prepararPDF()">Generar PDF</button><button class="danger" onclick="limpiar()">Limpiar Formulario</button></div>
+<section id="printArea" class="print-only"></section>
+</main>
+<script>
+const data=[
+{sec:'SISTEMA DE LUCES',items:['Luz Delantera alta','Luz Delantera baja','Luces neblineros','Luz direccional','Luz de freno posterior','Luz Pértiga','Luz Baliza']},
+{sec:'PARTE EXTERNA',items:['Parabrisas delantera','Parabrisas posterior','Limpia parabrisas','Vidrio de parabrisas','Espejo retrovisor','Espejos laterales']},
+{sec:'PARTE INTERNA',items:['Estado de Tablero','Freno de mano','Freno de servicio','Cinturones de seguridad','Dirección','Espejo retrovisor','Palanca de Cambio','Pedales freno/acelerador','Orden y limpieza','Asientos','Radio Base']},
+{sec:'ESTADO DE LLANTAS',items:['Llanta delantera derecha','Llanta delantera Izquierda','Llanta posterior derecha','Llanta posterior izquierda','Llanta de repuesto']},
+{sec:'ACCE. DE SEGURIDAD',items:['Botiquín','Extintor','Alarma de Retrocesos','Claxon o bocina','Cuñas de Seguridad (2)']},
+{sec:'TAPAS Y OTROS',items:['Tapa de tanque','Gata','Herramientas cambio rueda','Eslingas']}
+];
+const criticos=['Freno de servicio','Freno de mano','Dirección','Cinturones de seguridad','Llanta delantera derecha','Llanta delantera Izquierda','Llanta posterior derecha','Llanta posterior izquierda','Llanta de repuesto','Luz Delantera alta','Luz Delantera baja'];
+const checklist=document.getElementById('checklist');let idx=0;
+data.forEach(g=>{const title=document.createElement('div');title.className='section-title';title.textContent=g.sec;checklist.appendChild(title);g.items.forEach(item=>{idx++;const id='i'+idx;const div=document.createElement('div');div.className='item';div.dataset.id=id;div.dataset.name=item;div.dataset.sec=g.sec;div.dataset.critical=criticos.includes(item)?'1':'0';div.innerHTML=`<div class="item-top"><div class="item-name ${criticos.includes(item)?'critical':''}">${idx}. ${item}${criticos.includes(item)?' · crítico':''}</div><div class="options"><label class="pill ok"><input type="radio" name="${id}" value="OK"> OK</label><label class="pill obs"><input type="radio" name="${id}" value="OBS"> Observación</label><label class="pill na"><input type="radio" name="${id}" value="NA"> N/A</label></div></div><div class="obs-box"><label>Observación</label><textarea placeholder="Ingrese la observación para ${item}"></textarea></div>`;checklist.appendChild(div);});});
+function diasEntre(fechaISO){const hoy=new Date();hoy.setHours(0,0,0,0);const f=new Date(fechaISO+'T00:00:00');return Math.round((f-hoy)/86400000)}
+function estadoMantencion(){const v=document.getElementById('prox_mantencion').value;if(!v)return{txt:'Ingrese fecha de próxima mantención.',cls:'',estado:'Sin fecha'};const d=diasEntre(v);if(d<0)return{txt:`🔴 Mantención vencida hace ${Math.abs(d)} día(s).`,cls:'redb',estado:'Vencida'};if(d<=30)return{txt:`🟡 Próxima mantención en ${d} día(s).`,cls:'yellowb',estado:'Próxima a vencer'};return{txt:`🟢 Mantención vigente. Faltan ${d} día(s).`,cls:'greenb',estado:'Vigente'}}
+function updateUI(){let ok=0,obs=0,na=0,pend=0,obsCrit=0;document.querySelectorAll('.item').forEach(div=>{const sel=div.querySelector('input[type=radio]:checked');div.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));div.querySelector('.obs-box').classList.remove('show');if(sel){sel.closest('.pill').classList.add('active');if(sel.value==='OK')ok++;if(sel.value==='OBS'){obs++;div.querySelector('.obs-box').classList.add('show');if(div.dataset.critical==='1')obsCrit++;}if(sel.value==='NA')na++;}else pend++;});document.getElementById('summary').innerHTML=`<span class="badge okb">OK: ${ok}</span><span class="badge obsb">Observaciones: ${obs}</span><span class="badge nab">N/A: ${na}</span><span class="badge">Pendientes: ${pend}</span>`;const apto=document.getElementById('aptoStatus');if(obsCrit>0){apto.textContent=`🔴 Vehículo NO APTO sugerido: ${obsCrit} observación(es) crítica(s).`;apto.className='statusbox redb'}else if(pend>0){apto.textContent='🟡 Resultado pendiente: faltan ítems por revisar.';apto.className='statusbox yellowb'}else{apto.textContent='🟢 Vehículo APTO sugerido para operar.';apto.className='statusbox greenb'}const m=estadoMantencion();const ms=document.getElementById('mantStatus');ms.textContent=m.txt;ms.className='statusbox '+m.cls}
+document.addEventListener('change',updateUI);document.addEventListener('input',updateUI);
+function collect(){const ids=['vehiculo','area','placa','conductor','interno','fecha','km_actual','prox_mantencion'];const header={};ids.forEach(id=>header[id]=document.getElementById(id).value);const items=[...document.querySelectorAll('.item')].map(div=>({seccion:div.dataset.sec,item:div.dataset.name,critico:div.dataset.critical==='1',estado:(div.querySelector('input[type=radio]:checked')||{}).value||'',observacion:div.querySelector('textarea').value||''}));return{header,items,mantencion:estadoMantencion(),guardado:new Date().toLocaleString('es-CL')}}
+function guardar(){const r=collect();localStorage.setItem('checklist_camioneta_actual',JSON.stringify(r));const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');hist.unshift(r);localStorage.setItem('checklist_camioneta_historial',JSON.stringify(hist.slice(0,20)));renderHistorial();alert('Checklist guardado en este equipo.')} 
+function cargar(){const raw=localStorage.getItem('checklist_camioneta_actual');if(raw){const s=JSON.parse(raw);Object.entries(s.header||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});const divs=[...document.querySelectorAll('.item')];(s.items||[]).forEach((it,i)=>{const div=divs[i];if(!div)return;const r=div.querySelector(`input[value="${it.estado}"]`);if(r)r.checked=true;div.querySelector('textarea').value=it.observacion||''})}if(!document.getElementById('fecha').value)document.getElementById('fecha').valueAsDate=new Date();updateUI();renderHistorial()}
+function renderHistorial(){const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');const box=document.getElementById('historial');if(!hist.length){box.innerHTML='<div class="small">Sin registros guardados.</div>';return}box.innerHTML=hist.slice(0,5).map((h,i)=>`<div class="hist-item"><span><b>${h.header.fecha||'Sin fecha'}</b> · ${h.header.placa||''} · ${h.header.conductor||''}<br><span class="small">${h.guardado}</span></span><button class="secondary" onclick="cargarHistorial(${i})">Ver</button></div>`).join('')}
+function cargarHistorial(i){const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');const s=hist[i];if(!s)return;Object.entries(s.header||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});const divs=[...document.querySelectorAll('.item')];(s.items||[]).forEach((it,j)=>{const div=divs[j];if(!div)return;div.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);const r=div.querySelector(`input[value="${it.estado}"]`);if(r)r.checked=true;div.querySelector('textarea').value=it.observacion||''});updateUI();window.scrollTo(0,0)}
+function limpiar(){if(confirm('¿Limpiar todos los datos del formulario actual?')){localStorage.removeItem('checklist_camioneta_actual');document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.querySelectorAll('textarea').forEach(t=>t.value='');['conductor','km_actual','prox_mantencion'].forEach(id=>document.getElementById(id).value='');document.getElementById('fecha').valueAsDate=new Date();updateUI()}}
+function prepararPDF(){
+  const r=collect();
+  let ok=r.items.filter(x=>x.estado==='OK').length;
+  let na=r.items.filter(x=>x.estado==='NA').length;
+  let pend=r.items.filter(x=>!x.estado).length;
+  let obsn=r.items.filter(x=>x.estado==='OBS').length;
+  const critObs=r.items.filter(x=>x.estado==='OBS' && x.critico).length;
+  const apto=critObs>0?'NO APTO SUGERIDO':'APTO SUGERIDO';
+  const estadoTxt=(r.mantencion.txt||'').replace(/[🟢🟡🔴]/g,'').trim();
+  let filas='';
+  data.forEach(grupo=>{
+    filas += `<tr><td class="sec" colspan="4">${grupo.sec}</td></tr>`;
+    r.items.filter(x=>x.seccion===grupo.sec).forEach(x=>{
+      const estado=x.estado || 'PEND';
+      const obs=(x.observacion||'').trim();
+      filas += `<tr><td class="itemtxt">${x.item}${x.critico?' *':''}</td><td class="estado">${estado}</td><td class="obs" colspan="2">${obs}</td></tr>`;
+    });
+  });
+  document.getElementById('printArea').innerHTML=`
+  <div class="print-page">
+    <div class="print-head">
+      <div><h1>CHECK LIST CAMIONETA</h1><div class="print-sub">Sup. Eléctrica · Capstone Copper</div></div>
+      <div class="print-sub">Generado: ${new Date().toLocaleString('es-CL')}</div>
+    </div>
+    <table class="print-table">
+      <tr><th>Tipo vehículo</th><td>${r.header.vehiculo||''}</td><th>Área</th><td>${r.header.area||''}</td><th>Placa</th><td>${r.header.placa||''}</td><th>N° interno</th><td>${r.header.interno||''}</td></tr>
+      <tr><th>Conductor</th><td colspan="3">${r.header.conductor||''}</td><th>Fecha</th><td>${r.header.fecha||''}</td><th>Km actual</th><td>${r.header.km_actual||''}</td></tr>
+      <tr><th>Próx. mantención</th><td>${r.header.prox_mantencion||''}</td><th>Estado mantención</th><td colspan="3">${estadoTxt}</td><th>Resultado</th><td><b>${apto}</b></td></tr>
+    </table>
+    <table class="print-table">
+      <tr><th>OK</th><th>Observaciones</th><th>N/A</th><th>Pendientes</th><th>Críticos con obs.</th></tr>
+      <tr><td>${ok}</td><td>${obsn}</td><td>${na}</td><td>${pend}</td><td>${critObs}</td></tr>
+    </table>
+    <div class="print-status">Evidencia de checklist realizado: se imprimen todos los ítems revisados. Estados: OK / OBS / N/A / PEND.</div>
+    <table class="full-check">
+      <thead><tr><th class="itemtxt">Ítem</th><th class="estado">Estado</th><th class="obs" colspan="2">Observación</th></tr></thead>
+      <tbody>${filas}</tbody>
+    </table>
+    <div class="foot-note">* Ítem crítico para seguridad operacional. Revisar toda observación crítica antes de operar el vehículo.</div>
+  </div>`;
+  setTimeout(()=>window.print(),100);
+}
+cargar();
+</script>
+</body>
+</html>
