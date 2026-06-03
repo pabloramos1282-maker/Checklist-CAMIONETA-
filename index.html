@@ -65,6 +65,11 @@ input,textarea{width:100%;padding:10px;border:1px solid var(--border);border-rad
 <section class="card screen-card"><div class="summary" id="summary"></div><div id="aptoStatus" class="statusbox">Resultado: pendiente de evaluación.</div></section>
 <section id="checklist"></section>
 <section class="card screen-card">
+  <div class="section-title">COMENTARIOS GENERALES</div>
+  <label for="comentarios_generales">Comentarios adicionales del checklist</label>
+  <textarea id="comentarios_generales" placeholder="Ingrese comentarios generales, novedades del turno o información adicional para respaldo..."></textarea>
+</section>
+<section class="card screen-card">
   <strong>Historial local</strong><div class="small">Se guarda sólo en este equipo/navegador.</div><div id="historial"></div>
 </section>
 <div class="actions"><button class="good" onclick="guardar()">Guardar Checklist</button><button class="secondary" onclick="prepararPDF()">Generar PDF</button><button class="danger" onclick="limpiar()">Limpiar Formulario</button></div>
@@ -86,12 +91,12 @@ function diasEntre(fechaISO){const hoy=new Date();hoy.setHours(0,0,0,0);const f=
 function estadoMantencion(){const v=document.getElementById('prox_mantencion').value;if(!v)return{txt:'Ingrese fecha de próxima mantención.',cls:'',estado:'Sin fecha'};const d=diasEntre(v);if(d<0)return{txt:`🔴 Mantención vencida hace ${Math.abs(d)} día(s).`,cls:'redb',estado:'Vencida'};if(d<=30)return{txt:`🟡 Próxima mantención en ${d} día(s).`,cls:'yellowb',estado:'Próxima a vencer'};return{txt:`🟢 Mantención vigente. Faltan ${d} día(s).`,cls:'greenb',estado:'Vigente'}}
 function updateUI(){let ok=0,obs=0,na=0,pend=0,obsCrit=0;document.querySelectorAll('.item').forEach(div=>{const sel=div.querySelector('input[type=radio]:checked');div.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));div.querySelector('.obs-box').classList.remove('show');if(sel){sel.closest('.pill').classList.add('active');if(sel.value==='OK')ok++;if(sel.value==='OBS'){obs++;div.querySelector('.obs-box').classList.add('show');if(div.dataset.critical==='1')obsCrit++;}if(sel.value==='NA')na++;}else pend++;});document.getElementById('summary').innerHTML=`<span class="badge okb">OK: ${ok}</span><span class="badge obsb">Observaciones: ${obs}</span><span class="badge nab">N/A: ${na}</span><span class="badge">Pendientes: ${pend}</span>`;const apto=document.getElementById('aptoStatus');if(obsCrit>0){apto.textContent=`🔴 Vehículo NO APTO sugerido: ${obsCrit} observación(es) crítica(s).`;apto.className='statusbox redb'}else if(pend>0){apto.textContent='🟡 Resultado pendiente: faltan ítems por revisar.';apto.className='statusbox yellowb'}else{apto.textContent='🟢 Vehículo APTO sugerido para operar.';apto.className='statusbox greenb'}const m=estadoMantencion();const ms=document.getElementById('mantStatus');ms.textContent=m.txt;ms.className='statusbox '+m.cls}
 document.addEventListener('change',updateUI);document.addEventListener('input',updateUI);
-function collect(){const ids=['vehiculo','area','placa','conductor','interno','fecha','km_actual','prox_mantencion'];const header={};ids.forEach(id=>header[id]=document.getElementById(id).value);const items=[...document.querySelectorAll('.item')].map(div=>({seccion:div.dataset.sec,item:div.dataset.name,critico:div.dataset.critical==='1',estado:(div.querySelector('input[type=radio]:checked')||{}).value||'',observacion:div.querySelector('textarea').value||''}));return{header,items,mantencion:estadoMantencion(),guardado:new Date().toLocaleString('es-CL')}}
+function collect(){const ids=['vehiculo','area','placa','conductor','interno','fecha','km_actual','prox_mantencion','comentarios_generales'];const header={};ids.forEach(id=>header[id]=(document.getElementById(id)||{}).value||'');const items=[...document.querySelectorAll('.item')].map(div=>({seccion:div.dataset.sec,item:div.dataset.name,critico:div.dataset.critical==='1',estado:(div.querySelector('input[type=radio]:checked')||{}).value||'',observacion:div.querySelector('textarea').value||''}));return{header,items,mantencion:estadoMantencion(),guardado:new Date().toLocaleString('es-CL')}}
 function guardar(){const r=collect();localStorage.setItem('checklist_camioneta_actual',JSON.stringify(r));const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');hist.unshift(r);localStorage.setItem('checklist_camioneta_historial',JSON.stringify(hist.slice(0,20)));renderHistorial();alert('Checklist guardado en este equipo.')} 
 function cargar(){const raw=localStorage.getItem('checklist_camioneta_actual');if(raw){const s=JSON.parse(raw);Object.entries(s.header||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});const divs=[...document.querySelectorAll('.item')];(s.items||[]).forEach((it,i)=>{const div=divs[i];if(!div)return;const r=div.querySelector(`input[value="${it.estado}"]`);if(r)r.checked=true;div.querySelector('textarea').value=it.observacion||''})}if(!document.getElementById('fecha').value)document.getElementById('fecha').valueAsDate=new Date();updateUI();renderHistorial()}
 function renderHistorial(){const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');const box=document.getElementById('historial');if(!hist.length){box.innerHTML='<div class="small">Sin registros guardados.</div>';return}box.innerHTML=hist.slice(0,5).map((h,i)=>`<div class="hist-item"><span><b>${h.header.fecha||'Sin fecha'}</b> · ${h.header.placa||''} · ${h.header.conductor||''}<br><span class="small">${h.guardado}</span></span><button class="secondary" onclick="cargarHistorial(${i})">Ver</button></div>`).join('')}
 function cargarHistorial(i){const hist=JSON.parse(localStorage.getItem('checklist_camioneta_historial')||'[]');const s=hist[i];if(!s)return;Object.entries(s.header||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});const divs=[...document.querySelectorAll('.item')];(s.items||[]).forEach((it,j)=>{const div=divs[j];if(!div)return;div.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);const r=div.querySelector(`input[value="${it.estado}"]`);if(r)r.checked=true;div.querySelector('textarea').value=it.observacion||''});updateUI();window.scrollTo(0,0)}
-function limpiar(){if(confirm('¿Limpiar todos los datos del formulario actual?')){localStorage.removeItem('checklist_camioneta_actual');document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.querySelectorAll('textarea').forEach(t=>t.value='');['conductor','km_actual','prox_mantencion'].forEach(id=>document.getElementById(id).value='');document.getElementById('fecha').valueAsDate=new Date();updateUI()}}
+function limpiar(){if(confirm('¿Limpiar todos los datos del formulario actual?')){localStorage.removeItem('checklist_camioneta_actual');document.querySelectorAll('input[type=radio]').forEach(r=>r.checked=false);document.querySelectorAll('textarea').forEach(t=>t.value='');['conductor','km_actual','prox_mantencion','comentarios_generales'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('fecha').valueAsDate=new Date();updateUI()}}
 function prepararPDF(){
   const r=collect();
   let ok=r.items.filter(x=>x.estado==='OK').length;
@@ -101,6 +106,7 @@ function prepararPDF(){
   const critObs=r.items.filter(x=>x.estado==='OBS' && x.critico).length;
   const apto=critObs>0?'NO APTO SUGERIDO':'APTO SUGERIDO';
   const estadoTxt=(r.mantencion.txt||'').replace(/[🟢🟡🔴]/g,'').trim();
+  const comentariosGenerales=(r.header.comentarios_generales||'').trim();
   let filas='';
   data.forEach(grupo=>{
     filas += `<tr><td class="sec" colspan="4">${grupo.sec}</td></tr>`;
@@ -130,6 +136,8 @@ function prepararPDF(){
       <thead><tr><th class="itemtxt">Ítem</th><th class="estado">Estado</th><th class="obs" colspan="2">Observación</th></tr></thead>
       <tbody>${filas}</tbody>
     </table>
+    <div class="print-section">COMENTARIOS GENERALES</div>
+    <table class="print-table"><tr><td>${comentariosGenerales || 'Sin comentarios generales.'}</td></tr></table>
     <div class="foot-note">* Ítem crítico para seguridad operacional. Revisar toda observación crítica antes de operar el vehículo.</div>
   </div>`;
   setTimeout(()=>window.print(),100);
